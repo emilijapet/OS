@@ -1,1 +1,1 @@
-kernel.o: kernel.c
+kernel.o: kernel.c idt.h types.h

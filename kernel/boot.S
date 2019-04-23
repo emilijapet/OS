@@ -44,7 +44,6 @@ gdt_ptr:
          .short GDT_TABLE_SIZE - 1
          .long gdt_table
 
-
 .section .text
 .global _start
 .type _start, @function
@@ -106,6 +105,11 @@ page_directory_table_loop:
         hlt
 
 .code64
+
+.global idt_load
+idt_load:
+        lidt idtp
+        ret
 
 .global _start64
 .type _start64, @function
