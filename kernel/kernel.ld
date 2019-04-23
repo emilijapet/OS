@@ -39,7 +39,7 @@ SECTIONS
 
     .rodata : AT( (LOADADDR (.text) + SIZEOF (.text) + 0xFFF) & 0xFFFFFFFFFFFFF000 )
     {
-        *(.rodata)
+        *(.rodata.*)
     }
 
     . = ALIGN(0x1000);

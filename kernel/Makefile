@@ -5,6 +5,9 @@ CFLAGS = $(SHARED_FLAGS)
 ASFLAGS = $(SHARED_FLAGS) -Wa,--divide
 
 OBJS := boot.o
+OBJS += mem.o
+OBJS += basicio.o
+OBJS += scrn.o
 OBJS += idt.o
 OBJS += kernel.o
 
