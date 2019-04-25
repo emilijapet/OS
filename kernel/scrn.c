@@ -1,6 +1,4 @@
-#include "types.h"
-#include "mem.h"
-#include "basicio.h"
+#include "sys.h"
 
 #define COLOURS 7
 #define COLS 80

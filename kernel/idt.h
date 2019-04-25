@@ -31,13 +31,13 @@ struct idt_descr {
 
 struct idt_ptr {
     uint16_t limit;
-    unsigned long int base;
+    uint64_t base;
 } __attribute__((packed));
 
 struct idt_descr idt[256];
 struct idt_ptr idtp;    // pointer used in assembly
 
 void idt_install();
-void idt_set_gate(int16_t num, uint32_t base, uint16_t sel, uint8_t flags);
+void idt_set_gate(uint8_t num, uint64_t base, uint16_t sel, uint8_t type);
 
 #endif
