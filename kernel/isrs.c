@@ -36,15 +36,29 @@ char *exception_messages[] = {
     "Reserved"
 };
 
-void fault_handler(struct interrupt_stack *r){
+void fault_handler(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t rax, uint64_t r10, uint64_t r11, uint64_t int_no, uint64_t err_code, uint64_t eip, uint64_t cs, uint64_t eflags, uint64_t useresp, uint64_t ss){
     // Handle the known faults
 
-    if((r->int_no) < 32){
-        puts((uint8_t*)exception_messages[r->int_no]);
+    if(int_no < 32){
+        puts((uint8_t*)exception_messages[int_no]);
         puts((uint8_t*)" exception. System halted.\n");
         for(;;);
     } else {
-        printf("Uknown interrupt ir %d; ec %d! Continue execution.\n", r->int_no, r->err_code);
+        printf("Uknown interrupt ir %d; ec %d! Continue execution.\n", int_no, err_code);
         // for(;;);
     }
 }
+
+/*
+    save the arguments (error code and interrupt number) in registers - rdi and rsi
+    push some registers on the stack:
+        rax
+        rcx
+        rdx
+        rsi
+        rdi
+        r8
+        r9
+        r10
+        r11
+*/

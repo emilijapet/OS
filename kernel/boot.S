@@ -277,8 +277,8 @@ _isr7:
 _isr8:
         cli
         / We don't push an error code because it's already pushed
-        push $66
         push $8
+        movq $8, %rsi
         jmp isr_common_stub
 
 / Coprocessor segment overrun exception
@@ -292,6 +292,7 @@ _isr9:
 _isr10:
         cli
         / We don't push an error code because it's already pushed
+        push $10
         push $10
         jmp isr_common_stub
 
@@ -448,14 +449,12 @@ _isr31:
 / Define the common ISR stub. It saves the processor state, sets up for
 / kernel mode segments, calls the C fault handler and restores the stack frame
 isr_common_stub:
-        / Replacement for pusha - save some registers on the stack
+        / Registers r9, r8, rdx, rcx, rdi, rsi will be set as the first six arguments
+        / of the C function, so we don't need to push them on the stack. Only push the
+        / remaining 3 that could be srambled
+        push %r11
+        push %r10
         push %rax
-        push %rcx
-        push %rdx
-        push %rbx
-        push %rbp
-        push %rsi
-        push %rdi
 
         movw $0, %ax   //kernel data segment descriptor?
         movw %ax, %ds
@@ -471,54 +470,13 @@ isr_common_stub:
         movw %bx, %fs
         movw %bx, %gs
 
-        pop %rdi
-        pop %rsi
-        pop %rbp
-        pop %rbx
-        pop %rdx
-        pop %rcx
         pop %rax
+        pop %r10
+        pop %r11
 
         add $8, %rsp
         sti
         iret
-
-
-
-        / Save segment registers (not sure if it's actually needed)
-        / Don't save ES and DS because they're not used in long mode
-        /pushw %fs
-        /pushw %gs
-
-        /movw $0x10, %ax   //kernel data segment descriptor?
-        /movw %ax, %ds
-        /movw %ax, %es
-        /movw %ax, %fs
-        /movw %ax, %gs
-        /movl %esp, %eax  //push the stack to us?
-        /push %rax
-
-        / Call the C function
-        /call fault_handler
-
-        / Pop the segment registers
-        /pop %rax
-        /pop %gs
-        /pop %fs
-
-        / Replacement for popa - remove the registers from the stack
-        /pop %r11
-        /pop %r10
-        /pop %r9
-        /pop %r8
-        /pop %rdx
-        /pop %rcx
-        /pop %rax
-        /push %rdi
-        /push %rsi
-
-        /add $8, %esp     //cleans up the pushed error code and ISR number
-        /iretq    //pops these registers: CS, EIP, EFLAGS, SS, ESP
 
 / Define the IRQs
 _irq0:

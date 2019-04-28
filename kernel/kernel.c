@@ -10,7 +10,7 @@ void Kernel_Main(void){
 
     // _isr0();
     // _isr8();
-    // _isr10();
+    _isr10();
 
     // int i = 2;
     // putchar(i / 0);

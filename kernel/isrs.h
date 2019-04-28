@@ -1,21 +1,16 @@
 #ifndef _ISR_H_
 #define _ISR_H_
 
+void fault_handler(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t rax, uint64_t r10, uint64_t r11, uint64_t int_no, uint64_t err_code, uint64_t eip, uint64_t cs, uint64_t eflags, uint64_t useresp, uint64_t ss);
+
 // struct interrupt_stack {
-//     unsigned long int gs, fs;    // Registers we pushed manually
-//     unsigned long int rsi, rdi, rax, rcx, rdx, r8, r9, r10, r11;    // Registers pushed by PUSHA
-//     unsigned int int_no, err_code;  // The interrupt code and error code we pushed
-//     unsigned long int eip, cs, eflags, useresp, ss;  // Pushed by the processor automatically
+//     uint64_t ds;
+//     uint64_t rdi, rsi, rbp, rsp, rbx, rdx, rcx, rax;
+//     uint64_t int_no, err_code;
+//     uint64_t rip, cs, eflags, useresp, ss;
 // };
 
-struct interrupt_stack {
-    uint64_t ds;
-    uint64_t rdi, rsi, rbp, rsp, rbx, rdx, rcx, rax;
-    uint64_t int_no, err_code;
-    uint64_t rip, cs, eflags, useresp, ss;
-};
-
-void fault_handler(struct interrupt_stack *r);
+// void fault_handler(struct interrupt_stack *r);
 
 // ISR prototypes from boot.S
 extern void _isr0();
