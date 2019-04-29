@@ -71,6 +71,11 @@ gdt_ptr:
 .global _start
 .type _start, @function
 _start:
+        / Find out the actual size of memory
+
+
+
+
         / Save 2 x kernel boot stack size in the ESP register
         movl $tmp_stack + KERNEL_BOOT_STACK_SIZE, %esp
 
@@ -111,6 +116,64 @@ _start:
         movl $_kernel_physical_end, %esi
         shrl $TWO_MEGABYTES_SHIFT, %esi
         addl $1, %esi
+
+do_e820:
+        movl $0, %ebx
+        movw $0, %bp
+        movl $0x534D4150, %edx
+        movl $0xE820, %eax
+        movl $1, %es:20(%di)
+        movl $24, %ecx
+        int $0x15
+
+        / Carry set on the first call means unsupported function (?)
+        jc e820_failed
+
+        / Reset the EDX register to make sure it's not trashed.
+        / On success, EAX will also be set to SMAP. If it's a failure, just go to the
+        / failure handling method.
+        movl $0x534D4150, %edx
+        cmpl %edx, %eax
+        jne e820_failed
+        
+        / If it's a sucess, do a bitwise AND of EBX with itself. If the result is 0,
+        / it means that the list is only 1 entry long and is worthless, so we can quit again (?).
+        / Otherwise, do stuff.
+        testl %ebx, %ebx
+        je e820_failed
+        jmp e820_jumpin
+
+
+/ https://github.com/cirosantilli/x86-bare-metal-examples/blob/master/bios_detect_memory.S
+e820_failed:
+        stc
+        ret
+
+e820_jumpin:
+        jcxz
+
+e820_skip:
+        / If EBX becomes 0, the list is complete.
+        testl %ebx, %ebx
+        jne e820_step
+
+e820_step:
+        movl $0xE820, %eax
+        movl $1, %es:20(%di)
+        movl $24, %ecx
+        int $0x15
+
+        / If the end of the list is reached, finish up
+        jc e820_finish
+
+        / Otherwise, restore the EDX register again and keep going
+        movl $0x534D4150, %edx
+
+e820_finish:
+        / TODO: Store the entry count (from BP)
+        / Clear the carry and return
+        clc
+        ret
 
 / Set up the page directory table
 page_directory_table_loop:
@@ -607,6 +670,9 @@ _start64:
         movw %ax, %fs
         movw %ax, %gs
         movw %ax, %ss
+
+        //set the parameter for Kernel_Main
+        movq %rbx, %rdi
 
         / Go into C code
         call Kernel_Main
