@@ -5,6 +5,8 @@ void Kernel_Main(multiboot_info_t *mbi){
     vga_init();
     puts((uint8_t*)"Initialize IDT\n");
 
+    multiboot_memory_map_t* mmap = (multiboot_memory_map_t*) mbt->mmap_addr;
+
     // multiboot_memory_map_t* mmm2 = (multiboot_memory_map_t*) ((uint64_t) mmm->addr + mmm->len );
     // printf("MMM2 length: %d", mmm2->len);
 
