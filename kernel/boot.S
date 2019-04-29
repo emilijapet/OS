@@ -8,6 +8,7 @@
 / First define a couple variables for the multiboot header
 .SET HEADER_LENGTH, header_end - header_start
 .SET CHECKSUM, -(MULTIBOOT2_HEADER_MAGIC + MULTIBOOT_ARCHITECTURE_I386 + HEADER_LENGTH)
+.SET MEMINFO 1 << 1
 
 / Define the multiboot header itself. It stores:
 /  - the magic number 0x1BADB002
@@ -72,7 +73,7 @@ gdt_ptr:
 .type _start, @function
 _start:
         / Find out the actual size of memory
-        call do_e820
+        /call do_e820
 
 
 
