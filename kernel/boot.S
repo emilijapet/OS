@@ -72,7 +72,7 @@ gdt_ptr:
 .type _start, @function
 _start:
         / Find out the actual size of memory
-
+        call do_e820
 
 
 
@@ -150,7 +150,16 @@ e820_failed:
         ret
 
 e820_jumpin:
-        jcxz
+        / Skip if the entry is 0 (stored in the ECX register)
+        jcxz e820_skip
+
+        / If this is a 24 byte long responce for ACPI, read it?
+        cmpb $20, %cl
+        jbe e820_notext
+
+        / Not sure what this does
+        testb $1, %es:29(%di)
+        je e820_skip
 
 e820_skip:
         / If EBX becomes 0, the list is complete.
@@ -174,6 +183,17 @@ e820_finish:
         / Clear the carry and return
         clc
         ret
+
+e820_notext:
+        mov %ecx, %es:8(%di)
+        or %ecx, %es:12(%di)
+
+        / If the length is 0, skip the entry
+        jz e820_skip
+
+        / If this is a good entry, increment the count and move to the next entry
+        incw %bp
+        addw $24, %di
 
 / Set up the page directory table
 page_directory_table_loop:
