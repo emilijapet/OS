@@ -118,6 +118,7 @@ _start:
         addl $1, %esi
 
 do_e820:
+        mov $0x8004, %di
         movl $0, %ebx
         movw $0, %bp
         movl $0x534D4150, %edx
