@@ -434,6 +434,7 @@ struct multiboot_elf_section_header_table
 };
 typedef struct multiboot_elf_section_header_table multiboot_elf_section_header_table_t;
 
+__attribute__((packed))
 struct multiboot_info
 {
   /* Multiboot info version number */

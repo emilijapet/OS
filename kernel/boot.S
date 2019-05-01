@@ -31,6 +31,13 @@ header_start:
 
     // multiboot tags go here
 
+    .short MULTIBOOT_HEADER_TAG_INFORMATION_REQUEST
+    .short 0
+    .long 20
+    .long MULTIBOOT_TAG_TYPE_CMDLINE
+    .long MULTIBOOT_TAG_TYPE_BOOT_LOADER_NAME
+    .long MULTIBOOT_TAG_TYPE_MMAP
+    .align 8
     .short MULTIBOOT_HEADER_TAG_END
     .short 0    // flags, none set
     .long 8     // size, including itself (short + short + long)
@@ -76,9 +83,11 @@ _start:
         /call do_e820
 
 
-
         / Save 2 x kernel boot stack size in the ESP register
         movl $tmp_stack + KERNEL_BOOT_STACK_SIZE, %esp
+
+
+
 
         / Save the low page directory pointer table (pdpt) size in EAX.
         / Then, OR it with whether the MMU is present and writeable (both 1).
@@ -166,6 +175,7 @@ page_directory_table_loop:
 
         / Saves the limit and base of our GDT in the GDT register
         lgdt gdt_ptr
+        
 
         / Jumps to the 64b start function.
         / Kernel GDT entry * GDT entry size defines the code segment to switch to. It sets the CS (code segment) register.

@@ -8,9 +8,9 @@
 #include "scrn.h"
 #include "sizes.h"
 #include "types.h"
-#include "kheap.h"
-#include "frames.h"
-#include "paging.h"
+//#include "kheap.h"
+//#include "frames.h"
+//#include "paging.h"
 // #include "irq.h"
 
 #endif
