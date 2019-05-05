@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "scrn.h": "c"
+        "scrn.h": "c",
+        "multiboot2.h": "c"
     }
 }

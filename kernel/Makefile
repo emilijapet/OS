@@ -1,5 +1,5 @@
 CC=gcc
-SHARED_FLAGS = -fno-builtin -O2 -nostdinc -nostdlib -ffreestanding -g -Wall -Wextra \
+SHARED_FLAGS = -fno-builtin -O0 -nostdinc -nostdlib -ffreestanding -g -Wall -Wextra \
                -I. -MMD -mno-red-zone -mcmodel=kernel -fno-pie
 CFLAGS = $(SHARED_FLAGS)
 ASFLAGS = $(SHARED_FLAGS) -Wa,--divide
