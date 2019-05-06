@@ -294,7 +294,6 @@ _isr8:
         cli
         / We don't push an error code because it's already pushed
         push $8
-        movq $8, %rsi
         jmp isr_common_stub
 
 / Coprocessor segment overrun exception
@@ -308,7 +307,6 @@ _isr9:
 _isr10:
         cli
         / We don't push an error code because it's already pushed
-        push $10
         push $10
         jmp isr_common_stub
 

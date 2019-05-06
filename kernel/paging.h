@@ -1,30 +1,36 @@
 #ifndef _PAGING_H_
 #define _PAGING_H_
 
-#define NUMBER_OF_PAGES 1024;
-#include "sys.h"
+// #define NUMBER_OF_PAGES 1024;
+#include "types.h"
 
 typedef struct page {
     uint64_t present    : 1;
     uint64_t read_write : 1;    // Read only if it's clear, read write of not
-    uint64_t user       : 1;    // Supervisor level (?) only if it's clear
+    uint64_t user       : 1;    // If it's not set, only kernel mode code can access it
+    uint64_t write_thorugh    : 1;    // Writes go directly to memory if set
+    uint64_t caching    : 1;    // Don't cache the page if this is set
     uint64_t accessed   : 1;    // Marks if the page had been accessed
     uint64_t dirty      : 1;    // Marks if the page had been edited
-    uint64_t unused     : 7;    // Union of unused or reserved bits
-    uint64_t frame      : 20;   // Frame address
+    uint64_t huge_page  : 1;    // Must be 0 in level P1 and P4, creates a 1GB page in P3 and a 2MB page in P2
+    uint64_t global     : 1;    // Page isn't flushed from cache on address space switch (PGE bit in CR4 must be set for this)
+    uint64_t available_1  : 3;    // Can be used freely by the OS
+    uint64_t physical_addr  : 40;   // The page aligned 52 bit physical address of the frame or the next page table
+    uint64_t available_2    : 11;   // Can be used freely by the OS
+    uint64_t no_execute : 1;    // Forbid executing code on this page
 } page_t;
 
 typedef struct page_table {
-    page_t pages[NUMBER_OF_PAGES];
+    page_t pages[1024];
 } page_table_t;
 
 typedef struct page_directory {
     // Array of pointers to page tables
-    page_table_t *tables[NUMBER_OF_PAGES];
+    page_table_t *tables[1024];
 
     // Pointers to physical addresses of the same page tables
     // (for loading into CR3)
-    uint64_t tables_physical[NUMBER_OF_PAGES];
+    uint64_t tables_physical[1024];
 
     // The physical address of tables_physical
     uint64_t physical_addr;
@@ -33,6 +39,6 @@ typedef struct page_directory {
 void initialize_paging();
 void switch_page_directory(page_directory_t *directory);
 page_t *get_page(uint64_t address, int make, page_directory_t *directory);
-// void page_fault(registers_t regs);
+//void page_fault(registers_t regs);
 
 #endif

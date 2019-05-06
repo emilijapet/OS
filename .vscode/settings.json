@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "scrn.h": "c",
-        "multiboot2.h": "c"
+        "multiboot2.h": "c",
+        "kheap.h": "c"
     }
 }

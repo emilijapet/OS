@@ -10,7 +10,7 @@ OBJS += basicio.o
 OBJS += scrn.o
 OBJS += isrs.o
 OBJS += idt.o
-# OBJS += irq.o
+OBJS += linkedmem.o
 OBJS += kernel.o
 
 DFILES = $(patsubst %.o,%.d,$(OBJS))

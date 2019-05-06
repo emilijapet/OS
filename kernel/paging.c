@@ -13,7 +13,7 @@ page_directory_t *current_directory, *kernel_directory;
 extern uint64_t placement_addr;
 
 static void set_frame(uint64_t frame_addr){
-    uint64_t frame = frame_addr/0x1000;
+    uint64_t frame = frame_addr/0x4000;
     uint64_t index = INDEX_FROM_BIT(frame);
     uint64_t offset = OFFSET_FROM_BIT(frame);
     frames[index] |= (0x1 << offset);
@@ -48,7 +48,7 @@ static uint64_t first_frame(){
 }
 
 void alloc_frame(page_t *page, int is_kernel, int is_writeable){
-    if(page->frame != 0){
+    if(page->physical_addr != 0){
         return; // Frame was already allocated
     } else {
         uint64_t index = first_frame();
@@ -62,7 +62,7 @@ void alloc_frame(page_t *page, int is_kernel, int is_writeable){
         page->present = 1;
         page->read_write = is_writeable ? 1 : 0;
         page->user = is_kernel ? 0 : 1;
-        page->frame = index;
+        page->physical_addr = index;
     }
 }
 
