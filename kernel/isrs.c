@@ -36,23 +36,6 @@ char *exception_messages[] = {
     "Reserved"
 };
 
-void fault_handler(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t rax, uint64_t r10, uint64_t r11, uint64_t int_no, uint64_t err_code, uint64_t eip, uint64_t cs, uint64_t eflags, uint64_t useresp, uint64_t ss){
-    // Handle the known faults
-
-    if(int_no == 14){
-        page_fault_handler(err_code);
-    }
-
-    if(int_no < 32){
-        puts((uint8_t*)exception_messages[int_no]);
-        puts((uint8_t*)" exception. System halted.\n");
-        for(;;);
-    } else {
-        printf("Uknown interrupt ir %d; ec %d! Continue execution.\n", int_no, err_code);
-        // for(;;);
-    }
-}
-
 void page_fault_handler(uint64_t error_code){
     // The faulting address is stored in the CR2 register
     uint64_t faulting_address;
@@ -69,4 +52,21 @@ void page_fault_handler(uint64_t error_code){
     
     // Halt execution
     for(;;);
+}
+
+void fault_handler(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t rax, uint64_t r10, uint64_t r11, uint64_t int_no, uint64_t err_code, uint64_t eip, uint64_t cs, uint64_t eflags, uint64_t useresp, uint64_t ss){
+    // Handle the known faults
+
+    if(int_no == 14){
+        page_fault_handler(err_code);
+    }
+
+    if(int_no < 32){
+        puts((uint8_t*)exception_messages[int_no]);
+        puts((uint8_t*)" exception. System halted.\n");
+        for(;;);
+    } else {
+        printf("Uknown interrupt ir %d; ec %d! Continue execution.\n", int_no, err_code);
+        // for(;;);
+    }
 }

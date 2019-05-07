@@ -1,8 +1,9 @@
-#ifndef _PAGING_H_
-#define _PAGING_H_
+#ifndef _ALLOC_H_
+#define _ALLOC_H_
 
-// #define NUMBER_OF_PAGES 1024;
 #include "types.h"
+
+#define PAGE_SIZE 4096
 
 typedef struct page {
     uint64_t present    : 1;
@@ -21,24 +22,11 @@ typedef struct page {
 } page_t;
 
 typedef struct page_table {
-    page_t pages[1024];
+    page_t entries[512];
+    uint64_t last_entry;
 } page_table_t;
 
-typedef struct page_directory {
-    // Array of pointers to page tables
-    page_table_t *tables[1024];
-
-    // Pointers to physical addresses of the same page tables
-    // (for loading into CR3)
-    uint64_t tables_physical[1024];
-
-    // The physical address of tables_physical
-    uint64_t physical_addr;
-} page_directory_t;
-
-void initialize_paging();
-void switch_page_directory(page_directory_t *directory);
-page_t *get_page(uint64_t address, int make, page_directory_t *directory);
-//void page_fault(registers_t regs);
+page_table_t pt_c, pdt_c, pdpt_c, pml4_c;
+uint64_t map_memory(unsigned long addr);
 
 #endif

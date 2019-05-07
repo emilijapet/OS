@@ -2,8 +2,7 @@
 #include "multiboot2.h"
 #include "scrn.h"
 #include "idt.h"
-#include "paging.h"
-#include "linkedmem.h"
+#include "alloc.h"
 
 // TODO:
 // 1) When looping through memory map, create a list of available frames.
@@ -12,6 +11,7 @@
 // 4) Create kmalloc function
 
 uint64_t get_memory_size(unsigned long addr){//unsigned long magic,
+    
     struct multiboot_tag *tag;
     uint64_t total_memory_size = 0;
 
@@ -33,8 +33,8 @@ uint64_t get_memory_size(unsigned long addr){//unsigned long magic,
 
             for (mmap = ((struct multiboot_tag_mmap *) tag)->entries; (multiboot_uint8_t *) mmap < (multiboot_uint8_t *) tag + tag->size; mmap = (multiboot_memory_map_t *) ((unsigned long) mmap + ((struct multiboot_tag_mmap *) tag)->entry_size)){
                 if(mmap->type == MULTIBOOT_MEMORY_AVAILABLE){
+
                     total_memory_size += mmap->len;
-                    append_frame(mmap);
                 }
             }
         }
@@ -47,14 +47,11 @@ void Kernel_Main(unsigned long addr){
     vga_init();
     
     uint64_t memory_size = get_memory_size(addr);
-    printf("Linked list head address: ", size());
-    
+    //printf("Linked list head address: ", size());
+
     idt_install();
 
-    uint64_t pml4_addr;
-    asm volatile("movq %%cr3, %0" : "=r" (pml4_addr));
-    page_t *pg = pml4_addr;
-    printf("Page present: %d", pg->present);
+    map_memory(addr);
 
     puts((uint8_t*)"Test this bitch");
     while(1);
