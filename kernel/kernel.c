@@ -4,12 +4,6 @@
 #include "idt.h"
 #include "alloc.h"
 
-// TODO:
-// 1) When looping through memory map, create a list of available frames.
-// 2) Create frame allocation functions
-// 3) Create page allocation functions
-// 4) Create kmalloc function
-
 uint64_t get_memory_size(unsigned long addr){//unsigned long magic,
     
     struct multiboot_tag *tag;
@@ -50,8 +44,6 @@ void Kernel_Main(unsigned long addr){
     //printf("Linked list head address: ", size());
 
     idt_install();
-
-    map_memory(addr);
 
     puts((uint8_t*)"Test this bitch");
     while(1);

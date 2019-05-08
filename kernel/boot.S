@@ -79,26 +79,22 @@ gdt_ptr:
 .global _start
 .type _start, @function
 _start:
-        / Find out the actual size of memory
-        /call do_e820
-
-
         / Save 2 x kernel boot stack size in the ESP register
         movl $tmp_stack + KERNEL_BOOT_STACK_SIZE, %esp
 
-
-
-
         / Save the low page directory pointer table (pdpt) size in EAX.
         / Then, OR it with whether the MMU is present and writeable (both 1).
-        / Then move this result to the PML4 table at offset of the physical start of kernel * the size of a PML4 entry
+        / Then move this result to the PML4 table at offset of the physical start of kernel * the size of a PML4 entry.
+        / The addition makes sure we don't ovrewrite any kernel entries in PML4.
+        / This essentially adds an entry for the low PDPT to the PML4 table.
         movl $low_pdpt, %eax
         or $(MMU_PRESENT | MMU_WRITABLE), %eax
         movl %eax, pml4 + (PML4_ADDR_TO_ENTRY_INDEX(KERNEL_PHYSICAL_START) * PML4_ENTRY_SIZE)
 
         / Save the high PDPT size in EAX.
         / OR the size with MMU flags.
-        / Move the result to the PML4 table with offset of virtual start of kernel * size of a PML4 entry
+        / Move the result to the PML4 table with offset of virtual start of kernel * size of a PML4 entry.
+        / The addition makes sure we don't ovrewrite any kernel entries in PML4.
         movl $high_pdpt, %eax
         or $(MMU_PRESENT | MMU_WRITABLE), %eax
         movl %eax, pml4 + (PML4_ADDR_TO_ENTRY_INDEX(KERNEL_VIRTUAL_START) * PML4_ENTRY_SIZE)
@@ -167,7 +163,7 @@ page_directory_table_loop:
 
         / The CR0 register flag is moved into EAX.
         / It has bit 31 set - enable paging,
-        / bit 4 set - aloowed to specify the extension type,
+        / bit 4 set - alowed to specify the extension type,
         / bit 0 set - enabled protected mode.
         / This value is saved in the CR0 register.
         movl $KERNEL_CR0, %eax
