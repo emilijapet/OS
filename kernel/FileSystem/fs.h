@@ -18,21 +18,18 @@ typedef struct super_block {
 typedef struct inode {
     uint64_t valid;         // marks whether the inode is created
     uint64_t size;          // the total size of the file this inode points to
-    uint64_t direct[POINTERS_PER_NODE]; // direct pointers to data blocks
-    uint64_t indirect;      // pointer to an indirect pointer block
+    uint64_t starting_address;  // the starting address of the file
 } inode_t;
 
-typedef struct block {
-    inode_t inodes[INODES_PER_BLOCK]; // the data of an inode block
-    uint64_t pointers[POINTERS_PER_BLOCK];  // the data of an indirect pointer block
-    char data[BLOCK_SIZE];  // the data of a data block
-} block_t;
+typedef struct inode_block {
+    inode__t inodes[INODES_PER_BLOCK];  // all the inodes of this block
+} inode_block__t;
 
 // save the super block and the first inode block here. The super block should
 // be the very first entry in the disk, followed by any other reserved data, followed by the
 // inode blocks.
 super_block_t super;
-block__t first_iblock;
+inode_block__t first_iblock;
 
 void initialise_fs(uint64_t memory_size, uint64_t reserved_memory_size){
     &super = 0x0;
