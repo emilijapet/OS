@@ -10,6 +10,7 @@
 
 typedef struct super_block {
     uint64_t magic_number;  // the magic number, 0xf0f03410
+    uint64_t reserved_area_size;    // the size of the reserved area
     uint64_t num_blocks;    // the number of data blocks
     uint64_t num_iblocks;   // the number of inode blocks (10% of data blocks)
     uint64_t num_inodes;    // the number of inodes
@@ -22,27 +23,27 @@ typedef struct inode {
 } inode_t;
 
 typedef struct inode_block {
-    inode__t inodes[INODES_PER_BLOCK];  // all the inodes of this block
-} inode_block__t;
+    inode_t inodes[INODES_PER_BLOCK];  // all the inodes of this block
+} inode_block_t;
 
 // save the super block and the first inode block here. The super block should
 // be the very first entry in the disk, followed by any other reserved data, followed by the
 // inode blocks.
-super_block_t super;
-inode_block__t first_iblock;
+super_block_t *super;
+inode_block_t *first_iblock;
 
 void initialise_fs(uint64_t memory_size, uint64_t reserved_memory_size){
-    &super = 0x0;
-    super.magic_number = 0xf0f03410;
+    super = 0x0;
+    super->magic_number = 0xf0f03410;
 
     // 90% of the total available memory will be the number of data blocks, 10% will be the inode blocks
     uint64_t available_memory_blocks = (memory_size - reserved_memory_size - sizeof(super_block_t)) / BLOCK_SIZE;
-    super.num_blocks = available_memory_blocks * 0.9;
-    super.num_iblocks = available_memory_blocks * 0.1;
-    super.num_inodes = super.super.num_iblocks * POINTERS_PER_NODE;
+    super->num_blocks = available_memory_blocks * 0.9;
+    super->num_iblocks = available_memory_blocks * 0.1;
+    super->num_inodes = super->num_iblocks * POINTERS_PER_NODE;
 
     // set the location for the first iblock
-    &first_iblock = sizeof(super_block_t) + reserved_memory_size;
+    first_iblock = (inode_block_t *) (sizeof(super_block_t) + reserved_memory_size);
 }
 
 #endif

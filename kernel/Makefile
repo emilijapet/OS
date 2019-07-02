@@ -10,7 +10,9 @@ OBJS += basicio.o
 OBJS += scrn.o
 OBJS += isrs.o
 OBJS += idt.o
-OBJS += alloc.o
+OBJS += mem/frames.o
+OBJS += mem/paging.o
+OBJS += mem/memory_management.o
 OBJS += kernel.o
 
 DFILES = $(patsubst %.o,%.d,$(OBJS))

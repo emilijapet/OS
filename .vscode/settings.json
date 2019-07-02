@@ -4,6 +4,10 @@
         "multiboot2.h": "c",
         "kheap.h": "c",
         "idt.h": "c",
-        "types.h": "c"
+        "types.h": "c",
+        "frames.h": "c",
+        "alloc.h": "c",
+        "paging.h": "c",
+        "memory_management.h": "c"
     }
 }

@@ -2,7 +2,11 @@
 #include "multiboot2.h"
 #include "scrn.h"
 #include "idt.h"
-#include "alloc.h"
+// #include "alloc.h"
+#include "mem/paging.h"
+#include "mem/memory_management.h"
+
+extern void paging_init(uint64_t);
 
 uint64_t get_memory_size(unsigned long addr){//unsigned long magic,
     
@@ -39,11 +43,18 @@ uint64_t get_memory_size(unsigned long addr){//unsigned long magic,
 
 void Kernel_Main(unsigned long addr){
     vga_init();
-    
-    uint64_t memory_size = get_memory_size(addr);
     //printf("Linked list head address: ", size());
 
     idt_install();
+    
+    uint64_t memory_size = get_memory_size(addr);
+    paging_init(memory_size);
+
+    initialize_paging(memory_size);
+
+    uint64_t s_addr = kmalloc(0x1000);
+    int success = kfree(s_addr);
+    printf("Freed %s", success);
 
     puts((uint8_t*)"Test this bitch");
     while(1);
