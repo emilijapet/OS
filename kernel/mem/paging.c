@@ -152,7 +152,7 @@ void initialize_paging(uint64_t memory_size){
         // Create a page table entry for this, probably call into assembly for this
 
         // Then, if the piece of memory is within kernel bounds, mark it as allocated
-        if((i >= _kernel_physical_start && i <= placement_address) || (i >= _kernel_virtual_start && i <= _kernel_virtual_end)){
+        if(i <= 1048576 || (i >= 2097152 && i <= 3145728)){
             BITSET(frames, i / 0x1000);
         }
     }
