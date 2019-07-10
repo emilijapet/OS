@@ -520,6 +520,17 @@ isr_common_stub:
         sti
         iret
 
+.global _time
+_time:
+        / The reference to the time variable is stored in rax, but we need it in rdi
+        movq %rax, %rdi
+        movq $201, %rax
+        syscall
+        / The return value will be in rax, but it would be best to have in in rdi to be the
+        / first return register
+        movq %rax, %rdi
+        ret
+
 / The 64b start function.
 .global _start64
 .type _start64, @function

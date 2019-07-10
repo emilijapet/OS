@@ -7,6 +7,7 @@
 #include "mem/memory_management.h"
 
 extern void paging_init(uint64_t);
+extern time_t _time(time_t *t);
 
 uint64_t get_memory_size(unsigned long addr){//unsigned long magic,
     
@@ -43,14 +44,19 @@ uint64_t get_memory_size(unsigned long addr){//unsigned long magic,
 
 void Kernel_Main(unsigned long addr){
     vga_init();
-    //printf("Linked list head address: ", size());
-
     idt_install();
     
     uint64_t memory_size = get_memory_size(addr);
     paging_init(memory_size);
 
     initialize_paging(memory_size);
+
+    // Do some time stuff to see if it works
+    time_t t;
+    t = _time(t);
+    printf("Got time %d", t);
+
+
 
     uint64_t s_addr = kmalloc(0x1000);
     int success = kfree(s_addr);
