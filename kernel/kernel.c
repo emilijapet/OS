@@ -1,13 +1,10 @@
-//#include "sys.h"
 #include "multiboot2.h"
-#include "scrn.h"
-#include "idt.h"
-// #include "alloc.h"
+#include "io/scrn.h"
+#include "int/idt.h"
 #include "mem/paging.h"
 #include "mem/memory_management.h"
 
 extern void paging_init(uint64_t);
-extern time_t _time(time_t *t);
 
 uint64_t get_memory_size(unsigned long addr){//unsigned long magic,
     
@@ -42,21 +39,14 @@ uint64_t get_memory_size(unsigned long addr){//unsigned long magic,
     return total_memory_size;
 }
 
-void Kernel_Main(unsigned long addr){
+void Kernel_Main(unsigned long multiboot_addr){
     vga_init();
     idt_install();
     
-    uint64_t memory_size = get_memory_size(addr);
+    uint64_t memory_size = get_memory_size(multiboot_addr);
     paging_init(memory_size);
 
     initialize_paging(memory_size);
-
-    // Do some time stuff to see if it works
-    time_t t;
-    t = _time(t);
-    printf("Got time %d", t);
-
-
 
     uint64_t s_addr = kmalloc(0x1000);
     int success = kfree(s_addr);
