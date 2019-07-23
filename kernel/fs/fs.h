@@ -4,9 +4,10 @@
 #include "../types.h"
 
 #define BLOCK_SIZE 0x1000
-#define GRANULARITY 0x1000000000
+#define GRANULARITY 0x40000000
 
 typedef struct super_block {
+    uint64_t magic_number;
     uint64_t reserved_area_size;// the size of the reserved area
     uint64_t data_block_size;   // the size of a single data block
     uint64_t num_blocks;        // the number of available data blocks
@@ -20,13 +21,12 @@ typedef struct inode {
     uint64_t size;          // the total size of the file this inode points to
     uint64_t starting_address;  // the starting address of the file
 } inode_t;
-node_block_t;
 
 // save the super block and the first inode block here. The super block should
 // be the very first entry in the disk, followed by any other reserved data, followed by the
 // inode blocks.
 super_block_t *super;
-inode_t *inode_index_table;
+inode_t[] *inode_index_table;
 
 void initialise_fs(uint64_t memory_size, uint64_t reserved_memory_size){
     super = 0x0;

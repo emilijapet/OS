@@ -25,16 +25,9 @@ int64_t next_free_inode(){
     return -1;
 }
 
-
-
 inode_t * find_inode(uint64_t inumber){
     inode_t *inode = inode_index_table[inumber];
     return inode;
-}
-
-int64_t find_free_blocks(uint64_t num){
-    // TODO: do the bitmap stuff
-    return -1;
 }
 
 int64_t create_file(uint64_t size){
@@ -58,7 +51,6 @@ int64_t create_file(uint64_t size){
 
 int64_t write_file(uint64_t inumber, char *data, uint64_t size){
     inode_t *inode = find_inode(inumber);
-    int i;
 
     if(!inode->valid || size > inode->size){
         return -1;
@@ -73,6 +65,8 @@ int64_t delete_file(uint64_t inumber){
     if(!inode->valid){
         return -1;
     }
+
+    kfree(inode->starting_address);
 
     inode->valid = 0;
     inode->size = 0;
