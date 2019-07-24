@@ -3,6 +3,7 @@
 #include "int/idt.h"
 #include "mem/paging.h"
 #include "mem/memory_management.h"
+#include "io/ide.h"
 
 extern void paging_init(uint64_t);
 
@@ -49,8 +50,18 @@ void Kernel_Main(unsigned long multiboot_addr){
     initialize_paging(memory_size);
 
     uint64_t s_addr = kmalloc(0x1000);
+    uint64_t s_addr2 = kmalloc(0x6000);
+    uint64_t s_addr3 = kmalloc(0x20000000); // 512MB
+
+
+    uint64_t success2 = kfree(s_addr2);
     int success = kfree(s_addr);
+    int success3 = kfree(s_addr3);
+
     printf("Freed %s", success);
+    printf("Freed %s", success2);
+
+    ide_init();
 
     puts((uint8_t*)"Test this bitch");
     while(1);

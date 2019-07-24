@@ -1,4 +1,4 @@
-#include "sys.h"
+#include "../types.h"
 
 #define COLOURS 7
 #define COLS 80

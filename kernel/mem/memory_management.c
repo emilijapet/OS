@@ -6,5 +6,8 @@ uint64_t kmalloc(size_t size){
 }
 
 uint64_t kfree(uint64_t start_address){
+    if(!start_address){
+        return 0;
+    }
     return free_pages(start_address);
 }

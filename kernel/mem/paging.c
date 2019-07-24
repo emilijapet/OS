@@ -24,7 +24,9 @@ uint64_t kmalloc_c(uint64_t size, int align, uint64_t *physical_address){
 
 int create_list_entry(uint64_t address, size_t size){
     // if there are no entries yet, create the first one
-    if(!head->size){
+    if(!head){
+        head = kmalloc_c(sizeof(node_t), 0, 0);
+        memset(head, 0, sizeof(node_t));
         head->starting_address = address;
         head->size = size;
         return 1;
@@ -32,6 +34,7 @@ int create_list_entry(uint64_t address, size_t size){
 
     // otherwise, continue with the regular process
     node_t *n = kmalloc_c(sizeof(node_t), 0, 0);    // TODO: fix this;
+    memset(n, 0, sizeof(node_t));
     n->starting_address = address;
     n->size = size;
     n->next_node = 0;
@@ -50,7 +53,7 @@ int create_list_entry(uint64_t address, size_t size){
 
 node_t * get_list_entry(uint64_t address){
     // if there's no first node defined, return an error
-    if(!head->size){
+    if(!head){
         return 0;
     }
 
@@ -74,8 +77,6 @@ int remove_list_entry(uint64_t address){
     node_t *cur_node = head, *prev_node = 0;
     do {
         if(cur_node->starting_address == address){
-            clear_frames(address, cur_node->size / 0x1000);
-
             // if there were no nodes before this, replace the head with the next node.
             // otherwise, if it's not the last node in the list, create a new link from prev to next node
             if(!prev_node && cur_node->next_node){
@@ -143,7 +144,7 @@ void initialize_paging(uint64_t memory_size){
     frames = (uint64_t *) kmalloc_c(sizeof(BITNSLOTS(frame_count)), 0, 0);
 
     // Initialize the bitset and null it
-    *frames = BITNSLOTS(frame_count);
+    // *frames = BITNSLOTS(frame_count);
     memset(frames, 0, frame_count);
 
     // Identity map all the memory
@@ -152,7 +153,7 @@ void initialize_paging(uint64_t memory_size){
         // Create a page table entry for this, probably call into assembly for this
 
         // Then, if the piece of memory is within kernel bounds, mark it as allocated
-        if(i <= 1048576 || (i >= 2097152 && i <= 3145728)){
+        if(i <= 0x200000 || (i >= 0x400000 && i <= 0x600000)){
             BITSET(frames, i / 0x1000);
         }
     }

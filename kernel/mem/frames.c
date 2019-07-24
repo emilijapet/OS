@@ -9,11 +9,11 @@ int check_aligned(uint64_t address){
 
 int set_frames(uint64_t start_address, uint64_t num){
     if(!check_aligned(start_address)){
-        return -1;
+        return 0;
     }
 
     int i;
-    for(i = 0; i < num; i++){
+    for(i = start_address / 0x1000; i < (start_address / 0x1000) + num; i++){
         // if the frame is already allocated, fuck this shit
         if(BITTEST(frames, i)){
             return 0;
@@ -26,16 +26,16 @@ int set_frames(uint64_t start_address, uint64_t num){
 
 int clear_frames(uint64_t start_address, uint64_t num){
     if(!check_aligned(start_address)){
-        return -1;
+        return 0;
     }
 
     int i;
-    for(i = 0; i < num; i++){
+    for(i = start_address / 0x1000; i < (start_address / 0x1000) + num; i++){
         // if the frame is already deallocated, fuck this shit
         if(!BITTEST(frames, i)){
             return 0;
         }
-        BITSET(frames, i);
+        BITCLEAR(frames, i);
     }
 
     return 1;
@@ -48,16 +48,16 @@ uint64_t find_free_frames(size_t num){
 
     // Go through every frame in memory
     while(i < frame_count){
-        if(BITTEST(frames, i)){
+        if(!BITTEST(frames, i)){
             // If the frame is free, create a variable to count how many frames
             // we've already found
-            int j = 1;
-            while(j < num){
+            int j = i + 1;
+            while(j < i + num){
                 // Test the next frame. If it's also free, increase the counter of
                 // found free frames. If the frame is not free, we won't find n consecutive free
                 // frames from this point, so break this loop
-                i++;
-                if(BITTEST(frames, i)){
+                // i++;
+                if(!BITTEST(frames, j)){
                     j++;
                 } else {
                     break;
@@ -65,8 +65,8 @@ uint64_t find_free_frames(size_t num){
             }
 
             // If we found the n consecutive free frames, we don't need to loop anymore, return the address of the first frame.
-            if(j == num){
-                return (i - j) * 0x1000;
+            if(j == i + num){
+                return i * 0x1000;
             }
         }
         i++;

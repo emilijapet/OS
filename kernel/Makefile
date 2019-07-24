@@ -6,13 +6,14 @@ ASFLAGS = $(SHARED_FLAGS) -Wa,--divide
 
 OBJS := boot.o
 OBJS += mem.o
-OBJS += basicio.o
-OBJS += scrn.o
-OBJS += isrs.o
-OBJS += idt.o
+OBJS += io/basicio.o
+OBJS += io/scrn.o
+OBJS += int/isrs.o
+OBJS += int/idt.o
 OBJS += mem/frames.o
 OBJS += mem/paging.o
 OBJS += mem/memory_management.o
+OBJS += io/ide.o
 OBJS += kernel.o
 
 DFILES = $(patsubst %.o,%.d,$(OBJS))

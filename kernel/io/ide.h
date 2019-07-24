@@ -5,9 +5,9 @@
 
 #define SECTSIZE 512
 
-int ide_init(void);
-uint32_t ide_num_sectors(void);
-int ide_is_ready(void);
+int ide_init();
+uint32_t ide_num_sectors();
+int ide_is_ready();
 void ide_start_readwrite(uint32_t secno, size_t nsectors, int iswrite);
 
 static inline void ide_start_read(uint32_t secno, size_t nsectors){

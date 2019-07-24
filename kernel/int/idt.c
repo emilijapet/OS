@@ -1,4 +1,6 @@
-#include "sys.h"
+#include "../types.h"
+#include "idt.h"
+#include "isrs.h"
 
 // function defined in boot.S
 extern void idt_load();

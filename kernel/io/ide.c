@@ -34,12 +34,12 @@ static int diskno = 1;
 static uint32_t disk_sectors;
 
 // check if the drive is ready
-int ide_is_ready(void){
+int ide_is_ready(){
     return (inb(IDE_REG_STATUS) & (IDE_BSY | IDE_RDY)) == IDE_RDY;
 }
 
 // wait for the disk to be ready
-static int ide_wait_ready(bool ckeck_error){
+static int ide_wait_ready(bool check_error){
     int r;
     
     while(((r = inb(IDE_REG_STATUS)) & (IDE_BSY | IDE_RDY)) != IDE_RDY);
@@ -50,7 +50,7 @@ static int ide_wait_ready(bool ckeck_error){
     return 0;
 }
 
-static bool ide_probe_disk1(void){
+static bool ide_probe_disk1(){
     int r, x;
 
     // wait for device 0 - the master disk - to be ready
@@ -110,7 +110,7 @@ void ide_write_sector(char *src){
 }
 
 // retrieve disk info
-static void ide_identify(void){
+static void ide_identify(){
     uint16_t info[256];
 
     // wait until the disk is ready
@@ -125,7 +125,7 @@ static void ide_identify(void){
     outb(IDE_REG_COMMAND, IDE_COM_IDENTIFY);
 
     if(ide_wait_ready(1)){
-        crash("Error during disk identify")
+        crash("Error during disk identify");
     }
 
     ide_read_sector((char *) info);
@@ -134,12 +134,12 @@ static void ide_identify(void){
 }
 
 // get the number of sectors
-uint32_t ide_num_sectors(void){
+uint32_t ide_num_sectors(){
     return disk_sectors;
 }
 
 // initialize the driver
-int ide_init(void){
+int ide_init(){
     if(!ide_probe_disk1()){
         crash("Could not find disk 1");
     }

@@ -1,4 +1,4 @@
-#include "sys.h"
+#include "../types.h"
 
 // Just an array containing the interrupt messages
 char *exception_messages[] = {

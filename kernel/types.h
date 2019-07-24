@@ -13,6 +13,9 @@ typedef          long int	int64_t;
 typedef          void * size_t;
 typedef          long int	time_t;
 
+typedef _Bool bool;
+enum { false, true };
+
 #define NULL 0
 
 #endif
