@@ -5,18 +5,10 @@
 #include "mem/memory_management.h"
 #include "io/ide.h"
 
-extern void paging_init(uint64_t);
-
-uint64_t get_memory_size(unsigned long addr){//unsigned long magic,
+uint64_t get_memory_size(unsigned long addr){
     
     struct multiboot_tag *tag;
     uint64_t total_memory_size = 0;
-
-    /*if(magic != MULTIBOOT2_BOOTLOADER_MAGIC){
-        printf("Unaligned mbi!");
-        // invalid magic number
-        return 0;
-    }*/
 
     if(addr & 7){
         printf("Unaligned mbi!");
@@ -45,7 +37,6 @@ void Kernel_Main(unsigned long multiboot_addr){
     idt_install();
     
     uint64_t memory_size = get_memory_size(multiboot_addr);
-    paging_init(memory_size);
 
     initialize_paging(memory_size);
 
@@ -63,6 +54,6 @@ void Kernel_Main(unsigned long multiboot_addr){
 
     ide_init();
 
-    puts((uint8_t*)"Test this bitch");
+    puts((uint8_t*)"Will pause indefinitely.");
     while(1);
 }

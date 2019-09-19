@@ -14,7 +14,7 @@ int set_frames(uint64_t start_address, uint64_t num){
 
     int i;
     for(i = start_address / 0x1000; i < (start_address / 0x1000) + num; i++){
-        // if the frame is already allocated, fuck this shit
+        // if the frame is already allocated, quit
         if(BITTEST(frames, i)){
             return 0;
         }
@@ -31,7 +31,7 @@ int clear_frames(uint64_t start_address, uint64_t num){
 
     int i;
     for(i = start_address / 0x1000; i < (start_address / 0x1000) + num; i++){
-        // if the frame is already deallocated, fuck this shit
+        // if the frame is already deallocated, quit
         if(!BITTEST(frames, i)){
             return 0;
         }

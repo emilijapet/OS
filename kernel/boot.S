@@ -186,38 +186,6 @@ page_directory_table_loop:
 / Start of 64b code.
 .code64
 
-.global paging_init
-paging_init:
-        / store the size of memory in the esi register for comparison later
-        movq %rax, %rsi
-        shrq $TWO_MEGABYTES_SHIFT, %rsi
-        addq $1, %rsi
-
-        / ecx will essentially store the index of the page we want to map
-        movq $3, %rcx
-
-        jmp paging_init_loop
-
-paging_init_loop:
-        / turn eax into an address
-        movq $TWO_MEGABYTES, %rax
-        mul %rcx
-
-        / this will generate a table entry
-        or $(MMU_PRESENT | MMU_WRITABLE | MMU_PDE_TWO_MB), %rax
-        / write the entry to a table
-        movq %rax, high_page_directory_table(, %rcx, PAGE_DIRECTORY_ENTRY_SIZE)
-
-        / increment the counter and see if we've mapped all the memory yet.
-        / if not, do this again
-        inc %rcx
-        cmp %rsi, %rcx
-        jne paging_init_loop
-
-        / all done, return
-        ret
-
-
 / Define a global function to load the idt
 .global idt_load
 idt_load:
